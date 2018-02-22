@@ -9,15 +9,27 @@ const images = [
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const HEADER_MAX_HEIGHT = 200;
-const HEADER_MIN_HEIGHT = 60;
+const HEADER_MIN_HEIGHT = 30;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT-HEADER_MIN_HEIGHT;
 const scrollX = new Animated.Value(0);
+
+const transitionAnimation = index => {
+ 
+  return {
+   height:scrollX.interpolate({
+     inputRange: [(index - 1) * deviceWidth, index * deviceWidth,(index + 1) * deviceWidth],
+     outputRange: [HEADER_MIN_HEIGHT,HEADER_MAX_HEIGHT,HEADER_MIN_HEIGHT],
+     extrapolate: 'clamp',
+     easing:Easing.circle
+   })
+  }
+}
 
 const Screen = props => {
  
   return (
      <Animated.View style={[styles.imageContainerStyle,transitionAnimation(props.index)]}>
-     <View style={{paddingLeft:75,borderWidth:1,width:'100%'}}>
+     <View style={{paddingLeft:75,width:'100%'}}>
      <Image 
      style={[styles.imageStyle]}  
      source={{ uri: props.item }} 
@@ -28,22 +40,12 @@ const Screen = props => {
   );
 };
 
-const transitionAnimation = index => {
- 
-   return {
-    height:scrollX.interpolate({
-      inputRange: [0, deviceWidth/2,deviceWidth*1],
-      outputRange: [HEADER_MAX_HEIGHT,HEADER_MIN_HEIGHT,HEADER_MAX_HEIGHT],
-      extrapolate: 'clamp',
-      easing:Easing.bounce
-    })
-   }
-}
+
 export default class App extends React.Component {
 
   
   state = {
-    scrollX: new Animated.Value(0),
+    //scrollX: new Animated.Value(0),
     imageList:[]
 	};
 
@@ -53,16 +55,7 @@ export default class App extends React.Component {
       
      
   render() {
-
     
-    // const headerHeight = this.state.scrollX.interpolate({
-    //   inputRange: [0, deviceWidth/2,deviceWidth*1],
-    //   outputRange: [HEADER_MAX_HEIGHT,HEADER_MIN_HEIGHT,HEADER_MAX_HEIGHT],
-    //   extrapolate: 'clamp',
-    //   easing:Easing.bounce
-    // });
-    
-   
     // let translateY = this.state.animatedValue.interpolate({
 		// 	inputRange: [0, 180],
 		// 	outputRange: [0, -180],
@@ -77,7 +70,7 @@ export default class App extends React.Component {
           pagingEnabled
           scrollEventThrottle={16} 
           onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {x: this.state.scrollX}}}]
+            [{nativeEvent: {contentOffset: {x: scrollX}}}]
              )}
             data={this.state.imageList}
             keyExtractor={(x, i) => i}
@@ -101,11 +94,13 @@ const styles = StyleSheet.create({
   imageContainerStyle:{
     height:'60%',
     width:deviceWidth,
-    justifyContent:'center'
+    justifyContent:'center',
+   
   },
   imageStyle:{
-    height:'100%',
+    height:HEADER_MAX_HEIGHT,
     width:deviceWidth-150,
+    borderRadius:15
      
   },barContainer: {
     position: 'absolute',
