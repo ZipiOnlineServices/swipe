@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, Image,Dimensions,Animated, Easing,Alert } from 'react-native';
+import PrimeButton from './src/components/common/primebutton';
+
 const deviceWidth = Dimensions.get('window').width
 const images = [
   'https://s-media-cache-ak0.pinimg.com/originals/ee/51/39/ee5139157407967591081ee04723259a.png',
@@ -61,8 +63,15 @@ export default class App extends React.Component {
 		// 	outputRange: [0, -180],
 		// 	extrapolate: 'clamp',
     // });
-    
+    const smallShadowOpt = {
+      btnWidth: deviceWidth - 155,
+      btnHeight: 45,
+      backgroundColor: "#FFFFFF",
+      color: 'rgb(79,109,230)',
+    }
+
     return (
+     <View style={{flex:1}}>
      <View style={[styles.container]}>
         <AnimatedFlatList 
           horizontal 
@@ -78,21 +87,29 @@ export default class App extends React.Component {
            <Screen item={item} index={index} />
               }>
           </AnimatedFlatList>
-         
-       </View>
+        </View>
+        <View>
+          <PrimeButton
+            setting={smallShadowOpt}
+            btnText="BUY NOW"
+          />
+         </View> 
+        </View>
     );
   }
 }
 
+const spaceHeight=70
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex:0.5,
     flexDirection:'row',
     width:'100%',
-    alignItems:'center'
+    alignItems:'center',
+    borderWidth:1
   },
   imageContainerStyle:{
-    height:'60%',
+   
     width:deviceWidth,
     justifyContent:'center',
    
@@ -108,5 +125,9 @@ const styles = StyleSheet.create({
     top: 340,
     justifyContent:'center',
     flexDirection: 'row',
-  },
+  }, bottomBtn: {
+    position: 'absolute',
+    left: 77.5,
+    bottom: spaceHeight - 45, 
+  }
 });
